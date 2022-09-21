@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use Lunar\Hub\Auth\Manifest;
@@ -105,6 +106,7 @@ use Lunar\Hub\Menu\SidebarMenu;
 use Lunar\Hub\Menu\SlotRegistry;
 use Lunar\Hub\Tables\Builders\OrdersTableBuilder;
 use Lunar\Hub\Tables\Orders;
+use Lunar\Models\Product;
 
 class AdminHubServiceProvider extends ServiceProvider
 {
@@ -159,6 +161,10 @@ class AdminHubServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'adminhub');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'adminhub');
+
+        Route::bind('product', function ($id) {
+            return Product::withTrashed()->findOrFail($id);
+        });
 
         Config::set('livewire-tables.translate_namespace', 'adminhub');
 

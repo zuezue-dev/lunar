@@ -99,4 +99,6 @@ return [
     'priority.label' => 'Priority',
     'postcodes.label' => 'Postcodes',
     'postcodes.instructions' => 'List each postcode on a new line. Supports wildcards such as NW*',
+    'restore.title' => 'Restore',
+    'restore.label' => 'Restore this record',
 ];
