@@ -3,6 +3,7 @@
 namespace Lunar\Api;
 
 use Illuminate\Support\ServiceProvider;
+use Lunar\Api\Globals\GlobalChannel;
 
 class ApiServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,13 @@ class ApiServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind('storefront', function () {
+            return new Storefront();
+        });
+
+        $this->app->scoped(GlobalChannel::class, function ($app) {
+            return new GlobalChannel;
+        });
     }
 
     /**
