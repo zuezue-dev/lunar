@@ -9,27 +9,22 @@ class Products
 {
     use HasChannel;
 
-    public function paginate()
+    protected $query;
+
+    public function __construct()
     {
-        // Return paginated products for the channel
-        $prefix = config('lunar.database.table_prefix');
-
-        return Product::whereHas('channels', function ($q) use ($prefix) {
-            $q->where("{$prefix}channels.id", "=", $this->channel->id);
-        })->paginate();
-
-        // TODO: need to have a think about pagination approach
+        $this->query = Product::query();
     }
 
-    // Thoughts...
-    //
-    // Are we going to end up making a high-level query builder?
-
-    // e.g.
-
-    public function filterByBrands($brands)
+    public function filterByChannel() // Maybe we optionally set a channel, otherwise it defaults?
     {
-        //$this->query->whereHas(...)
+        $prefix = config('lunar.database.table_prefix');
+
+        $this->query->whereHas('channels', function ($q) use ($prefix) {
+            $q->where("{$prefix}channels.id", "=", $this->channel->id);
+        });
+
+        return $this;
     }
 
     public function filterByAvailable()
@@ -47,4 +42,79 @@ class Products
         //
     }
 
+    public function filterByCollection()
+    {
+        //
+    }
+
+    public function filterByAssociation()
+    {
+        //
+    }
+
+    public function filterByTag()
+    {
+        //
+    }
+
+    public function filterByType()
+    {
+        //
+    }
+
+    public function filterBySlug($slug)
+    {
+        //
+    }
+
+    public function filterByBrands($brands)
+    {
+        //$this->query->whereHas(...)
+    }
+
+    public function withPrimaryImage()
+    {
+        //
+    }
+
+    public function withImages()
+    {
+        //
+    }
+
+    public function withCheapestVariant()
+    {
+        //
+    }
+
+    public function withFirstVariant() // Issue: Can't reorder variants in the hub?
+    {
+        //
+    }
+
+    public function withVariants()
+    {
+        // Variants are fairly simple, so just include everything?
+    }
+
+    public function query()
+    {
+        return $this->query;
+    }
+
+    public function get()
+    {
+        return $this->query->get();
+    }
+
+    public function first()
+    {
+        return $this->query->first();
+    }
+
+    public function paginate()
+    {
+        // TODO: need to have a think about pagination approach
+        return $this->query->paginate();
+    }
 }
