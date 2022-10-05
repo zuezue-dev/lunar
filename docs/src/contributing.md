@@ -18,6 +18,8 @@ There are two branches you need to be aware of when contributing to Lunar - `mai
 
 The `main` branch hosts the latest stable version of the software and documentation. Whereas the `develop` branch hosts new features and updates in active development between releases.
 
+If you're looking to hotfix onto an older supported release, you should target that release branch when creating your own branch and Pull Request.
+
 ## Documentation
 
 If you would like to contribute to the documentation you can do easily by following these instructions...
