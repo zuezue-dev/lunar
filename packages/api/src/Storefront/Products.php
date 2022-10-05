@@ -3,11 +3,12 @@
 namespace Lunar\Api\Storefront;
 
 use Lunar\Api\Concerns\HasChannel;
+use Lunar\Base\Traits\HasMacros;
 use Lunar\Models\Product;
 
 class Products
 {
-    use HasChannel;
+    use HasChannel, HasMacros;
 
     protected $query;
 
@@ -112,9 +113,8 @@ class Products
         return $this->query->first();
     }
 
-    public function paginate()
+    public function paginate($perPage = null)
     {
-        // TODO: need to have a think about pagination approach
-        return $this->query->paginate();
+        return $this->query->paginate($perPage);
     }
 }
