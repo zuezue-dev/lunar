@@ -29,7 +29,6 @@ class Products
         ))->execute();
     }
 
-
 // Ideas...
 
     public function visible(Product $product)

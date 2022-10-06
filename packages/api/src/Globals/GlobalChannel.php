@@ -2,7 +2,6 @@
 
 namespace Lunar\Api\Globals;
 
-use Illuminate\Support\Facades\Facade;
 use Lunar\Models\Channel;
 
 class GlobalChannel
