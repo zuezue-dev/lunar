@@ -16,6 +16,7 @@ use Lunar\Hub\Exceptions\VariantsDisabledException;
 use Lunar\Models\Product;
 use Lunar\Models\ProductOptionValue;
 use Lunar\Models\ProductVariant;
+use Illuminate\Support\Str;
 
 class GenerateVariants implements ShouldQueue
 {
@@ -93,7 +94,7 @@ class GenerateVariants implements ShouldQueue
 
         $baseVariant = $this->product->variants->first();
 
-        DB::transaction(function () use ($permutations, $baseVariant) {
+        DB::transaction(function () use ($permutations, $baseVariant, $valueModels) {
             // Validation bits
             $rules = config('lunar-hub.products', []);
 
@@ -103,7 +104,6 @@ class GenerateVariants implements ShouldQueue
                 $uoms = ['length', 'width', 'height', 'weight', 'volume'];
 
                 $attributesToCopy = [
-                    'sku',
                     'gtin',
                     'mpn',
                     'ean',
@@ -119,8 +119,26 @@ class GenerateVariants implements ShouldQueue
 
                 foreach ($attributes as $attribute => $value) {
                     if ($rules[$attribute]['unique'] ?? false) {
-                        $attributes[$attribute] = $attributes[$attribute].'-'.($key + 1);
+                        $attributes[$attribute] = $value;
                     }
+                }
+
+                $attributes['sku'] = $baseVariant->sku;
+
+                $skuSettings = config('lunar-hub.products.sku', [
+                    'required' => true,
+                    'unique' => true,
+                ]);
+
+                if ($skuSettings['required'] && $skuSettings['unique']) {
+                    $optionValues = $valueModels->filter(function ($value) use ($optionsToCreate) {
+                        if (!is_array($optionsToCreate)) {
+                            return $value->id == $optionsToCreate;
+                        }
+                        return in_array($value->id, $optionsToCreate);
+                    })->map(fn ($value) => Str::slug($value->translate('name')))->join('-');
+
+                    $attributes['sku'] .= "-$optionValues";
                 }
 
                 $pricing = $baseVariant->prices->map(function ($price) {
