@@ -4,6 +4,7 @@ namespace Lunar\Api;
 
 use Illuminate\Support\ServiceProvider;
 use Lunar\Api\Globals\GlobalChannel;
+use Lunar\Api\Globals\GlobalLanguage;
 
 class ApiServiceProvider extends ServiceProvider
 {
@@ -20,6 +21,10 @@ class ApiServiceProvider extends ServiceProvider
 
         $this->app->scoped(GlobalChannel::class, function ($app) {
             return new GlobalChannel;
+        });
+
+        $this->app->scoped(GlobalLanguage::class, function ($app) {
+            return new GlobalLanguage;
         });
     }
 

@@ -2,119 +2,51 @@
 
 namespace Lunar\Api\Storefront;
 
+use Lunar\Api\Actions;
 use Lunar\Api\Concerns\HasChannel;
+use Lunar\Api\Concerns\HasLanguage;
 use Lunar\Base\Traits\HasMacros;
 use Lunar\Models\Product;
 
 class Products
 {
-    use HasChannel, HasMacros;
+    use HasChannel, HasLanguage, HasMacros;
 
-    protected $query;
-
-    public function __construct()
+    public function getByUrl($slug, $eagerLoad = [])
     {
-        $this->query = Product::query();
+        return (new Actions\Urls\FindBySlug(
+            Product::class,
+            $slug,
+            $eagerLoad
+        ))->execute();
     }
 
-    public function filterByChannel() // Maybe we optionally set a channel, otherwise it defaults?
+    public function getDefaultUrl($product, $language = null)
     {
-        $prefix = config('lunar.database.table_prefix');
-
-        $this->query->whereHas('channels', function ($q) use ($prefix) {
-            $q->where("{$prefix}channels.id", "=", $this->channel->id);
-        });
-
-        return $this;
+        return (new Actions\Urls\GetDefaultUrl(
+            $product,
+            $language
+        ))->execute();
     }
 
-    public function filterByAvailable()
+
+// Ideas...
+
+    public function visible(Product $product)
     {
-        //
+        return (new Actions\Product\CheckVisible(
+            $product,
+            $this->channel,
+            //$this->customerGroup
+        ))->execute();
     }
 
-    public function filterByCustomerGroup()
+    public function purchasable(Product $product)
     {
-        //
-    }
-
-    public function filterByStock()
-    {
-        //
-    }
-
-    public function filterByCollection()
-    {
-        //
-    }
-
-    public function filterByAssociation()
-    {
-        //
-    }
-
-    public function filterByTag()
-    {
-        //
-    }
-
-    public function filterByType()
-    {
-        //
-    }
-
-    public function filterBySlug($slug)
-    {
-        //
-    }
-
-    public function filterByBrands($brands)
-    {
-        //$this->query->whereHas(...)
-    }
-
-    public function withPrimaryImage()
-    {
-        //
-    }
-
-    public function withImages()
-    {
-        //
-    }
-
-    public function withCheapestVariant()
-    {
-        //
-    }
-
-    public function withFirstVariant() // Issue: Can't reorder variants in the hub?
-    {
-        //
-    }
-
-    public function withVariants()
-    {
-        // Variants are fairly simple, so just include everything?
-    }
-
-    public function query()
-    {
-        return $this->query;
-    }
-
-    public function get()
-    {
-        return $this->query->get();
-    }
-
-    public function first()
-    {
-        return $this->query->first();
-    }
-
-    public function paginate($perPage = null)
-    {
-        return $this->query->paginate($perPage);
+        return (new Actions\Product\CheckPurchasable(
+            $product,
+            $this->channel,
+            //$this->customerGroup
+        ))->execute();
     }
 }

@@ -3,29 +3,30 @@
 namespace Lunar\Api;
 
 use Lunar\Api\Globals\GlobalChannel;
+use Lunar\Api\Globals\GlobalLanguage;
 use Lunar\Api\Storefront\Products;
+use Lunar\Api\Storefront\Urls;
 use Lunar\Models\Channel;
+use Lunar\Models\Language;
 
 class Storefront
 {
-    protected ?Channel $channel;
-
     public function __construct()
     {
         $this->channel = app(GlobalChannel::class)->getChannel();
+        $this->language = app(GlobalLanguage::class)->getLanguage();
     }
 
     public function setGlobalChannel(Channel $channel)
     {
         app(GlobalChannel::class)->setChannel($channel);
-        $this->setChannel($channel);
 
         return $this;
     }
 
-    public function setChannel(Channel $channel)
+    public function setGlobalLanguage(Language $language)
     {
-        $this->channel = $channel;
+        app(GlobalLanguage::class)->setLanguage($language);
 
         return $this;
     }
@@ -38,8 +39,10 @@ class Storefront
         return $products;
     }
 
-    public function url()
+    public function urls()
     {
-        return "Hello, " . $this->channel->name;
+        $urls = app(Urls::class);
+
+        return $urls;
     }
 }
